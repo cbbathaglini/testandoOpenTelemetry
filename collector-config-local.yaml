@@ -7,6 +7,9 @@ receivers:
 exporters:
   logging:
     loglevel: debug
+  prometheus:
+    endpoint: collector:6666
+    namespace: default
   otlp:
     endpoint: tempo:4317
     tls:
@@ -16,7 +19,7 @@ service:
   pipelines:
     metrics:
       receivers: [otlp]
-      exporters: [logging]
+      exporters: [logging,prometheus]
     traces:
       receivers: [otlp]
       exporters: [logging,otlp]
