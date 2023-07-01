@@ -1,9 +1,1 @@
-# 01
-docker compose up -d <br>
-docker compose -f docker-compose-aws.yaml up -d
-# 02
-
-cd /Documents/Estudos/openTelemetry/testandoOpenTelemetry
-./run-microservice.sh
-
-![](/images/grafana.png)
+https://www.notion.so/carinebertagnolli/d54be5141b2540789b2c2902b61daf65?v=42b53e7df1704b12964e9e371cc772fc&pvs=4

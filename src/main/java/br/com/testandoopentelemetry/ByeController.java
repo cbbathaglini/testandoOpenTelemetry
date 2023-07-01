@@ -1,7 +1,13 @@
 package br.com.testandoopentelemetry;
 
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.Meter;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
-import lombok.With;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,22 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
-import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.api.metrics.LongCounter;
-import io.opentelemetry.api.metrics.Meter;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.context.Scope;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
-
 import static br.com.testandoopentelemetry.Constants.*;
 import static java.lang.Runtime.getRuntime;
 
 @RestController
-public class InitialController {
+public class ByeController {
 
     private static final Logger log =
-            LoggerFactory.getLogger(InitialController.class);
+            LoggerFactory.getLogger(ByeController.class);
 
 
     @Value("otel.traces.api.version")
@@ -35,9 +33,9 @@ public class InitialController {
     @Value("otel.metrics.api.version")
     private String metricsApiVersion;
 
-    private final Tracer tracer = GlobalOpenTelemetry.getTracer("io.opentelemetry.traces.hello",tracesApiVersion);
+    private final Tracer tracer = GlobalOpenTelemetry.getTracer("io.opentelemetry.traces.bye",tracesApiVersion);
     private final Meter meter = GlobalOpenTelemetry
-            .meterBuilder("io.opentelemetry.metrics.hello")
+            .meterBuilder("io.opentelemetry.metrics.bye")
             .setInstrumentationVersion(metricsApiVersion)
             .build();
 
@@ -63,13 +61,13 @@ public class InitialController {
                 );
     }
 
-    @RequestMapping(method= RequestMethod.GET, value="/hello")
-    public Response hello() {
+    @RequestMapping(method= RequestMethod.GET, value="/bye")
+    public Response bye() {
         Response response = buildResponse();
-        Span span = tracer.spanBuilder("mySpan").startSpan();
+        Span span = tracer.spanBuilder("byeSpan").startSpan();
         try(Scope scope = span.makeCurrent()){
             if (response.isValid()) {
-                log.info("The response is valid.");
+                log.info("[bye] The response is valid.");
             }
             numberOfExecutions.add(1);
         }finally {
@@ -80,7 +78,7 @@ public class InitialController {
 
     @WithSpan
     private Response buildResponse() {
-        return new Response("Hello World");
+        return new Response("Bye World");
     }
 
     private record Response (String message) {
